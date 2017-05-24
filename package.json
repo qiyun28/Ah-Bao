@@ -1,0 +1,12 @@
+{
+  "name": "AhBao",
+  "private": true,
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-connect": "^0.2.0"
+  },
+  "engines": {
+    "node": ">=6.10.3"
+  },
+  "license": "CC BY-SA 4.0"
+}
