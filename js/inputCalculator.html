@@ -1,0 +1,143 @@
+<script>
+// input: an array with 4 numbers, 3 operands, 0 to 2 set of brackets
+function calc(input) {
+  console.log(input);
+  var len = input.length;
+  var arrNum = [], arrOp = [];
+  
+  while (input != null && input.length > 0) {
+    if (typeof input[0] === 'number') {
+      arrNum.push(input.shift());
+    } else if (input.length < 2) {
+      return "invalid input: operand last";
+    } else if (input[0] === "+" || input[0] === "-") {
+      arrOp.push(input.shift());
+    } else if (input[0] === "*" || input[0] === "/") {
+      var temp;
+      var tempOp = input.shift();
+      if (tempOp === "*") {
+        if (typeof input[0] === 'number') {
+          temp = arrNum.pop() * input.shift();
+        } else if (input[0] === '(') {
+          temp = arrNum.pop() * calc(input.slice(0));
+        } else {
+          return "invalid input: wrong input after *";
+        }
+      } else {
+        if (input[0] === 0) {
+          return "invalid input: divide by zero"
+        } else if (typeof input[0] === 'number') {
+          temp = arrNum.pop() / input.shift();
+        } else if (input[0] === '(') {
+          temp = arrNum.pop() / calc(input.slice(0));
+        } else {
+          return "invalid input: wrong input after /";
+        }
+      }
+      arrNum.push(temp);
+    } else if (input[0] === '(') {
+      var endBracket = input.lastIndexOf(')');
+      var valBracket = calc(input.slice(1,endBracket));
+      input.splice(0, endBracket+1, valBracket);
+      //arrNum.push(valBracket);
+    } else {
+      console.log(input);
+      return "invalid input C";
+    }
+  }
+
+  while (arrNum.length > 1) {
+    var op = arrOp.shift(); 
+    if (op === '+') {
+      arrNum.unshift(arrNum.shift() + arrNum.shift());
+    } else if (op === '-') {
+      arrNum.unshift(arrNum.shift() - arrNum.shift());
+    } else {
+      return "invalid input: after stacking";
+    }
+  }
+  
+  if (arrNum.length === 1) {
+    return arrNum[0];
+  }
+}
+
+function typeChecker(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    console.log(typeof arr[i]);
+    console.log(typeof arr[i] === 'number');
+  }
+}
+
+function strToArr(str) {
+  var arr = str.split('');
+  for (var n = 0; n < arr.length; n++) {
+    if (/^\d$/.test(arr[n])) {
+      arr[n] = parseInt(arr[n]);
+    }
+  }
+  return arr;
+}
+
+console.log("test 1: 1+2+3+4 = 10");
+var myString = "1+2+3+4";
+var myInput = strToArr(myString);
+var result = calc(myInput);
+console.log(result);
+
+console.log("test 2: 9-2-3-4 = 0");
+var myString = "9-2-3-4";
+var myInput = strToArr(myString);
+var result = calc(myInput);
+console.log(result);
+
+console.log("test 3: 9-2+3-4 = 6");
+var myString = "9-2+3-4";
+var myInput = strToArr(myString);
+var result = calc(myInput);
+console.log(result);
+
+console.log("test 4: 9*2*3*4 = 216");
+var myString = "9*2*3*4";
+var myInput = strToArr(myString);
+var result = calc(myInput);
+console.log(result);
+
+console.log("test 5: 9/2/3/1 = 1.5");
+var myString = "9/2/3/1";
+var myInput = strToArr(myString);
+var result = calc(myInput);
+console.log(result);
+
+console.log("test 6: 9/2/0/1 = divide by zero");
+var myString = "9/2/0/1";
+var myInput = strToArr(myString);
+var result = calc(myInput);
+console.log(result);
+
+console.log("test 7: 9*2/3*4 = 24");
+var myString = "9*2/3*4";
+var myInput = strToArr(myString);
+var result = calc(myInput);
+console.log(result);
+
+console.log("test 8: (2-3)*(3+6) = 9");
+var myString = "9*2/3*4";
+var myInput = strToArr(myString);
+var result = calc(myInput);
+console.log(result);
+//TODO fail
+
+console.log("test 9: ((1+1)/2)+5 = 6");
+var myString = "9*2/3*4";
+var myInput = strToArr(myString);
+var result = calc(myInput);
+console.log(result);
+//TODO fail
+
+console.log("test 10: 1+(2-3)/2 = 0.5");
+var myString = "1+(2-3)/2";
+var myInput = strToArr(myString);
+var result = calc(myInput);
+console.log(result);
+</script>
