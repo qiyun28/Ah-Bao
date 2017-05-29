@@ -1,143 +1,70 @@
 <script>
-// input: an array with 4 numbers, 3 operands, 0 to 2 set of brackets
-function calc(input) {
-  console.log(input);
-  var len = input.length;
-  var arrNum = [], arrOp = [];
-  
-  while (input != null && input.length > 0) {
-    if (typeof input[0] === 'number') {
-      arrNum.push(input.shift());
-    } else if (input.length < 2) {
-      return "invalid input: operand last";
-    } else if (input[0] === "+" || input[0] === "-") {
-      arrOp.push(input.shift());
-    } else if (input[0] === "*" || input[0] === "/") {
-      var temp;
-      var tempOp = input.shift();
-      if (tempOp === "*") {
-        if (typeof input[0] === 'number') {
-          temp = arrNum.pop() * input.shift();
-        } else if (input[0] === '(') {
-          temp = arrNum.pop() * calc(input.slice(0));
-        } else {
-          return "invalid input: wrong input after *";
+// input: an array consista of 4 positive int with value from 1 to 13, 3 operators, 
+//     and 0 to 2 pairs pf brackets. previously checked to be a valid equation     
+// output: one number as the result of calculation
+function calculate(arr) {
+    // first loop to elminate all brackets
+    var ptrA = 0;
+    while (arr.length - ptrA > 3) { //check until left with 3 elements, then confirm no more brackets
+        if (arr[ptrA] === '(') {
+            var bracketClose = arr.lastIndexOf(')');
+            var newarr = arr.slice(ptrA+1, bracketClose);
+            var bracketVal = calculate(newarr);
+            arr.splice(ptrA, bracketClose-ptrA+1, bracketVal);
         }
-      } else {
-        if (input[0] === 0) {
-          return "invalid input: divide by zero"
-        } else if (typeof input[0] === 'number') {
-          temp = arrNum.pop() / input.shift();
-        } else if (input[0] === '(') {
-          temp = arrNum.pop() / calc(input.slice(0));
+        ptrA++;
+    }
+    // second loop do all multiply and division in equation
+    var ptrB = 0;
+    while (arr.length - ptrB > 1) {
+        if (typeof arr[ptrB] === 'number' || arr[ptrB] === '+' || arr[ptrB] === '-') {
+            ptrB++;
         } else {
-          return "invalid input: wrong input after /";
+            var valMD;
+            if (arr[ptrB] === '*') {
+                valMD = arr[ptrB-1] * arr[ptrB+1];
+            } else if (arr[ptrB] === '/') {
+                valMD = arr[ptrB-1] / arr[ptrB+1];
+            } else { console.log('error'); }
+            arr.splice(ptrB-1, 3, valMD);
         }
-      }
-      arrNum.push(temp);
-    } else if (input[0] === '(') {
-      var endBracket = input.lastIndexOf(')');
-      var valBracket = calc(input.slice(1,endBracket));
-      input.splice(0, endBracket+1, valBracket);
-      //arrNum.push(valBracket);
-    } else {
-      console.log(input);
-      return "invalid input C";
     }
-  }
-
-  while (arrNum.length > 1) {
-    var op = arrOp.shift(); 
-    if (op === '+') {
-      arrNum.unshift(arrNum.shift() + arrNum.shift());
-    } else if (op === '-') {
-      arrNum.unshift(arrNum.shift() - arrNum.shift());
-    } else {
-      return "invalid input: after stacking";
+    // third loop do all plus and minus in equation
+    var ptrC = 0;
+    while (arr.length > 1) {
+        if (typeof arr[ptrC] === 'number') {
+            ptrC++;
+        } else {
+            var valPM;
+            if (arr[ptrC] === '+') {
+                valPM = arr[ptrC-1] + arr[ptrC+1];
+            } else if (arr[ptrC] === '-') {
+                valPM = arr[ptrC-1] - arr[ptrC+1];
+            } else { console.log('error'); }
+            arr.splice(ptrC-1, 3, valPM);
+        }
     }
-  }
-  
-  if (arrNum.length === 1) {
-    return arrNum[0];
-  }
+    // return the last element left in array as the answer
+    if (arr.length === 1) {
+        return arr[0];
+    } else { console.log('error'); }
 }
 
-function typeChecker(arr) {
-  for (let i = 0; i < arr.length; i++) {
-    console.log(typeof arr[i]);
-    console.log(typeof arr[i] === 'number');
-  }
-}
+var test = calculate(['(', '(', 9, '/', 3, '+', 8,  '/', 4, ')',')']);
+console.log(test);
 
-function strToArr(str) {
-  var arr = str.split('');
-  for (var n = 0; n < arr.length; n++) {
-    if (/^\d$/.test(arr[n])) {
-      arr[n] = parseInt(arr[n]);
+// random number generator 
+// input: nil
+// output: generate four integer numbers between 1 to 13, as an array
+function rand() {
+    var arr = [];
+    for(var i = 0; i < 4; i++) {
+        var num = Math.floor((Math.random() * 52) + 1);
+        arr.push([Math.floor(num/13), num%13]);
     }
-  }
-  return arr;
+    return arr;
 }
 
-console.log("test 1: 1+2+3+4 = 10");
-var myString = "1+2+3+4";
-var myInput = strToArr(myString);
-var result = calc(myInput);
-console.log(result);
-
-console.log("test 2: 9-2-3-4 = 0");
-var myString = "9-2-3-4";
-var myInput = strToArr(myString);
-var result = calc(myInput);
-console.log(result);
-
-console.log("test 3: 9-2+3-4 = 6");
-var myString = "9-2+3-4";
-var myInput = strToArr(myString);
-var result = calc(myInput);
-console.log(result);
-
-console.log("test 4: 9*2*3*4 = 216");
-var myString = "9*2*3*4";
-var myInput = strToArr(myString);
-var result = calc(myInput);
-console.log(result);
-
-console.log("test 5: 9/2/3/1 = 1.5");
-var myString = "9/2/3/1";
-var myInput = strToArr(myString);
-var result = calc(myInput);
-console.log(result);
-
-console.log("test 6: 9/2/0/1 = divide by zero");
-var myString = "9/2/0/1";
-var myInput = strToArr(myString);
-var result = calc(myInput);
-console.log(result);
-
-console.log("test 7: 9*2/3*4 = 24");
-var myString = "9*2/3*4";
-var myInput = strToArr(myString);
-var result = calc(myInput);
-console.log(result);
-
-console.log("test 8: (2-3)*(3+6) = 9");
-var myString = "9*2/3*4";
-var myInput = strToArr(myString);
-var result = calc(myInput);
-console.log(result);
-//TODO fail
-
-console.log("test 9: ((1+1)/2)+5 = 6");
-var myString = "9*2/3*4";
-var myInput = strToArr(myString);
-var result = calc(myInput);
-console.log(result);
-//TODO fail
-
-console.log("test 10: 1+(2-3)/2 = 0.5");
-var myString = "1+(2-3)/2";
-var myInput = strToArr(myString);
-var result = calc(myInput);
-console.log(result);
+var randArr = rand();
+console.log(randArr);
 </script>
