@@ -50,6 +50,7 @@ var states = {
     },
     startgame: function() {
         this.create = function() {
+            _game.renderer.renderSession.roundPixels = true;
             _game.stage.backgroundColor = '#DDF0ED';
             var startText = _game.add.text(_game.world.centerX, _game.world.centerY, '开始游戏', {
                 font: 'Microsoft YaHei, STXihei, serif',
@@ -85,7 +86,7 @@ var states = {
             _HP.cropEnabled = true;
             _HP.crop(_HPWidth);
 
-            bmd = _game.add.bitmapData(280, 30);
+            bmd = _game.add.bitmapData(140, 30);
             bmd.ctx.beginPath();
             bmd.ctx.rect(0, 0, 300, 80);
             bmd.ctx.fillStyle = '#f7cac9';
@@ -126,8 +127,9 @@ var states = {
             } else {
                 _SPText += spCrop
             }
-            _game.add.tween(_HPWidth).to( { width: (_HPWidth.width - (_width / 10)) }, 200, Phaser.Easing.Linear.None, true);
-            _game.add.tween(_SPWidth).to( { width: (_SPWidth.width - (_width / 10)) }, 200, Phaser.Easing.Linear.None, true);
+            console.log(_SPWidth.width);
+            _game.add.tween(_HPWidth).to( { width: (280/100*_HPText) }, 200, Phaser.Easing.Linear.None, true);
+            _game.add.tween(_SPWidth).to( { width: (280/100*_SPText) }, 200, Phaser.Easing.Linear.None, true);
         }
         // watch and update health bar
         this.update = function() {
@@ -195,6 +197,7 @@ var states = {
     },
     dead: function() {
         this.create = function() {
+            _game.renderer.renderSession.roundPixels = true;
             var bg = _game.add.image(0, 0, 'bg');
             bg.width = _game.world.width;
             bg.height = _game.world.height;
@@ -222,6 +225,7 @@ var states = {
     },
     breakup: function() {
         this.create = function() {
+            _game.renderer.renderSession.roundPixels = true;
             var bg = _game.add.image(0, 0, 'bg');
             bg.width = _game.world.width;
             bg.height = _game.world.height;
