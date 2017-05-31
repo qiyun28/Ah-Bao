@@ -20,8 +20,8 @@ var states = {
             // load assets
             _game.load.crossOrigin = 'anonymous';    // TODO check whether necessary 
             _game.load.image('bg', './assets/bg.png');
-            _game.load.image('infoBox', './assets/buttonLong_grey.png');
-            _game.load.image('mcqBox', './assets/buttonLong_beige.png');
+            _game.load.image('infoBox', './assets/panel_blue.png');
+            _game.load.image('mcqBox', './assets/panel_beige.png');
             _game.load.image('mcqChoice', './assets/buttonLong_brown.png');
             _game.load.json('content', './assets/content.json');
             // text indication for loading progress
@@ -77,7 +77,7 @@ var states = {
             var bmd = _game.add.bitmapData(280, 30);
             bmd.ctx.beginPath();
             bmd.ctx.rect(0, 0, 300, 80);
-            bmd.ctx.fillStyle = '#00f910';
+            bmd.ctx.fillStyle = '#92a8d1';
             bmd.ctx.fill();
             
             _HPWidth = new Phaser.Rectangle(0, 0, bmd.width, bmd.height);
@@ -88,7 +88,7 @@ var states = {
             bmd = _game.add.bitmapData(280, 30);
             bmd.ctx.beginPath();
             bmd.ctx.rect(0, 0, 300, 80);
-            bmd.ctx.fillStyle = '#ffffff';
+            bmd.ctx.fillStyle = '#f7cac9';
             bmd.ctx.fill();
 
             _SPWidth = new Phaser.Rectangle(0, 0, bmd.width, bmd.height);
@@ -103,7 +103,7 @@ var states = {
             box.anchor.setTo(0.5, 0.5);
             dialogText = _game.add.text(_game.world.centerX, box.top + box.height/2, content[_step]['text'], {
                 font: 'Microsoft YaHei, STXihei, serif',
-                fontSize: '15px',
+                fontSize: '14px',
                 fill: '#05173B'
             });
             dialogText.anchor.setTo(0.5, 0.5);
@@ -161,7 +161,7 @@ var states = {
                     choices[n].anchor.setTo(0.5, 0.5);
                     choices[n+3] = _game.add.text(choices[n].centerX, choices[n].centerY, content[_step]['choices'][n], {
                         font: 'Microsoft YaHei, STXihei, serif',
-                        fontSize: '15px',
+                        fontSize: '14px',
                         fill: '#05173B'
                     });
                     choices[n+3].anchor.setTo(0.5, 0.5);
@@ -183,7 +183,6 @@ var states = {
                     }
                     dialogText.setText("你选择了： " + chosen + '\n\n' + content[_step]['text'][chosen]);
                     dialogText.y = box.centerY;
-                    console.log(content[_step]['effect'][chosen]);
                     if (content[_step]['effect'][chosen] !== 'nil') {
                         cropLife(content[_step]['effect'][chosen][0], content[_step]['effect'][chosen][1]);
                     } else {}
