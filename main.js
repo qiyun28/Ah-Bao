@@ -157,6 +157,7 @@ var states = {
                 dialogText.y = box.top + _game.world.width * 0.16;
                 var choiceY = box.top + _game.world.width * 0.32;
                 for (let n = 0; n < 3; n++) {
+                    // TODO: if not null, load texture to prevent sprite being created repetitively
                     choices[n] =  _game.add.sprite(_game.world.centerX, choiceY, 'mcqChoice');
                     choices[n].width = _game.world.width * 0.6;
                     choices[n].height = _game.world.height * 0.08;
