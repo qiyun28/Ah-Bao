@@ -1,6 +1,8 @@
 // TODO will be changed later
 var _width = 320;
 var _height = 568;
+var _barWidth = 0.75 * _width;
+var _barHeight = 0.045 * _height;
 
 var _game = new Phaser.Game(_width, _height, Phaser.AUTO, '#game');
 var content;
@@ -11,6 +13,8 @@ var _HPText;
 var _SP;
 var _SPWidth;
 var _SPText;
+var hptextbox;
+var sptextbox;
 
 var states = {
     preload: function() {
@@ -75,27 +79,50 @@ var states = {
         var choices = [];
         this.create = function() {
             // health bar section
-            var bmd = _game.add.bitmapData(280, 30);
+            var bmd = _game.add.bitmapData(_barWidth, _barHeight);
             bmd.ctx.beginPath();
-            bmd.ctx.rect(0, 0, 300, 80);
+            bmd.ctx.rect(0, 0, _barWidth, _barHeight);
             bmd.ctx.fillStyle = '#92a8d1';
             bmd.ctx.fill();
             
             _HPWidth = new Phaser.Rectangle(0, 0, bmd.width, bmd.height);
-            _HP = _game.add.sprite(_game.world.centerX - 300/2 + 10, _game.world.top + 10, bmd);
+            _HP = _game.add.sprite((_game.world.centerX - _barWidth/2 - _width*0.05), _game.world.top + _barHeight, bmd);
             _HP.cropEnabled = true;
             _HP.crop(_HPWidth);
 
-            bmd = _game.add.bitmapData(140, 30);
-            bmd.ctx.beginPath();
-            bmd.ctx.rect(0, 0, 300, 80);
-            bmd.ctx.fillStyle = '#f7cac9';
-            bmd.ctx.fill();
+            var bmd2 = _game.add.bitmapData(_barWidth, _barHeight);
+            bmd2.ctx.beginPath();
+            bmd2.ctx.rect(0, 0, _barWidth, _barHeight);
+            bmd2.ctx.fillStyle = '#f7cac9';
+            bmd2.ctx.fill();
 
-            _SPWidth = new Phaser.Rectangle(0, 0, bmd.width, bmd.height);
-            _SP = _game.add.sprite(_game.world.centerX - 300/2 + 10, _game.world.top + 40, bmd);
+            _SPWidth = new Phaser.Rectangle(0, 0, bmd2.width, bmd2.height);
+            _SP = _game.add.sprite((_game.world.centerX - _barWidth/2 - _width*0.05), _game.world.top + _barHeight * 1.5, bmd2);
             _SP.cropEnabled = true;
             _SP.crop(_SPWidth);
+            _SPWidth.width = _barWidth * 0.5;
+
+            hptextbox = _game.add.text(_HP.right, _HP.centerY - _barHeight/2, '0%', {
+                fontSize: '20px',
+                fill: '#ffffff'
+            });
+            hptextbox.text = _HPText + '%';
+            sptextbox = _game.add.text(_SP.right, _SP.centerY - _barHeight/2, '0%', {
+                fontSize: '20px',
+                fill: '#ffffff'
+            });
+            sptextbox.text = _SPText + '%';
+
+            var tilizhi = _game.add.text(_HP.left, _HP.top, '体力值', {
+                font: 'Microsoft YaHei, STXihei, serif',
+                fontSize: '20px',
+                fill: '#ffffff'
+            });
+            var haogandu = _game.add.text(_SP.left, _SP.top, '好感度', {
+                font: 'Microsoft YaHei, STXihei, serif',
+                fontSize: '20px',
+                fill: '#ffffff'
+            });
 
             // dialog box section
             box = _game.add.sprite(_game.world.centerX, _game.world.centerY, 'infoBox');
@@ -128,8 +155,8 @@ var states = {
                 _SPText += spCrop
             }
             console.log(_SPWidth.width);
-            _game.add.tween(_HPWidth).to( { width: (280/100*_HPText) }, 200, Phaser.Easing.Linear.None, true);
-            _game.add.tween(_SPWidth).to( { width: (280/100*_SPText) }, 200, Phaser.Easing.Linear.None, true);
+            _game.add.tween(_HPWidth).to( { width: (_barWidth/100*_HPText) }, 200, Phaser.Easing.Linear.None, true);
+            _game.add.tween(_SPWidth).to( { width: (_barWidth/100*_SPText) }, 200, Phaser.Easing.Linear.None, true);
         }
         // watch and update health bar
         this.update = function() {
@@ -138,6 +165,11 @@ var states = {
         };
         // update on tap
         function updateText(pointer) {
+            if (choices.length > 0) {
+                for (var el in choices) { 
+                    choices[el].destroy();
+                }
+            }
             if (_HPText <= 0) {
                 _game.state.start('dead');
             }
@@ -157,7 +189,6 @@ var states = {
                 dialogText.y = box.top + _game.world.width * 0.16;
                 var choiceY = box.top + _game.world.width * 0.32;
                 for (let n = 0; n < 3; n++) {
-                    // TODO: if not null, load texture to prevent sprite being created repetitively
                     choices[n] =  _game.add.sprite(_game.world.centerX, choiceY, 'mcqChoice');
                     choices[n].width = _game.world.width * 0.6;
                     choices[n].height = _game.world.height * 0.08;
@@ -194,6 +225,8 @@ var states = {
             } else {
                 console.log("json file type error");
             }
+            hptextbox.text = _HPText + '%';
+            sptextbox.text = _SPText + '%';
         }
     },
     dead: function() {
