@@ -20,9 +20,9 @@ var states = {
             // load assets
             _game.load.crossOrigin = 'anonymous';    // TODO check whether necessary 
             _game.load.image('bg', './assets/bg.png');
-            _game.load.image('infoBox', './assets/panel_blue.png');
-            _game.load.image('mcqBox', './assets/panel_beige.png');
-            _game.load.image('mcqChoice', './assets/buttonLong_brown.png');
+            _game.load.image('infoBox', './assets/box_info.png');
+            _game.load.image('mcqBox', './assets/box_mcq.png');
+            _game.load.image('mcqChoice', './assets/box_choice.png');
             _game.load.json('content', './assets/content.json');
             // text indication for loading progress
             var progressText = _game.add.text(_game.world.centerX, _game.world.centerY, '0%', {
