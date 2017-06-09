@@ -28,4 +28,4 @@ Note: We use CDN for Phaser
 
 
 ### License
-CC BY-SA 4.0
+GPL-3.0
