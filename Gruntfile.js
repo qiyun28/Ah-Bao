@@ -10,7 +10,3 @@ module.exports = function(grunt) {
     });
     grunt.loadNpmTasks('grunt-connect');
 };
-
-// grunt.loadNpmTasks('grunt-connect');
-
-// grunt.registerTask('connect',['build']);
