@@ -1,6 +1,7 @@
-// TODO will be changed later
-var _width = 320;
-var _height = 568;
+// 320 * 568 for testing purpose
+// change to window.innerWidth * window.innerHeight
+var _width = window.innerWidth;
+var _height = window.innerHeight;
 var _barWidth = 0.75 * _width;
 var _barHeight = 0.045 * _height;
 
