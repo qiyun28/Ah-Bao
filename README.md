@@ -24,8 +24,6 @@ A [Phaser.js](https://phaser.io/) game made for fun
     ```
 - open http://localhost:1337/index.html in browser
 
-Note: We use CDN for Phaser
-
 
 ### License
 GPL-3.0
