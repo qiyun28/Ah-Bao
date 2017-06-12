@@ -189,8 +189,8 @@ var states = {
                 box.loadTexture('mcqBox');
                 box.height = _game.world.height * 0.5;
                 dialogText.setText(content[_step]['question']);
-                dialogText.y = box.top + _game.world.width * 0.16;
-                var choiceY = box.top + _game.world.width * 0.32;
+                dialogText.y = box.top + _game.world.height * 0.1;
+                var choiceY = box.top + _game.world.height * 0.2;
                 for (let n = 0; n < 3; n++) {
                     if (n === 2 && content[_step].hasOwnProperty('special')) {
                         if (content[_step]['special'] !== _sWupin) {
@@ -207,7 +207,7 @@ var states = {
                         fill: '#05173B'
                     });
                     choices[n+3].anchor.setTo(0.5, 0.5);
-                    choiceY += _game.world.width * 0.16;
+                    choiceY += _game.world.width * 0.1;
                 }
                 _step = content[_step]['next'];
             } else if (content[_step]['type'] === 'asw') {
