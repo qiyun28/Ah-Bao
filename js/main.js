@@ -16,6 +16,8 @@ var _SPText;
 var hptextbox;
 var sptextbox;
 
+var _sWupin;
+
 var states = {
     preload: function() {
         this.preload = function() {
@@ -23,7 +25,7 @@ var states = {
             _game.stage.backgroundColor = '#000000';
             // load assets
             _game.load.crossOrigin = 'anonymous';    // TODO check whether necessary 
-            _game.load.image('bg', './assets/bg.png');
+            // _game.load.image('bg', './assets/bg.png');
             _game.load.image('infoBox', './assets/box_info.png');
             _game.load.image('mcqBox', './assets/box_mcq.png');
             _game.load.image('mcqChoice', './assets/box_choice.png');
@@ -67,7 +69,7 @@ var states = {
             
             _step = "0a";
             _SPText = 50;
-            _HPText = 100;
+            _HPText = 80;
             _game.input.onTap.add(function() {
                 _game.state.start('maingame');
             });
@@ -89,6 +91,7 @@ var states = {
             _HP = _game.add.sprite((_game.world.centerX - _barWidth/2 - _width*0.05), _game.world.top + _barHeight, bmd);
             _HP.cropEnabled = true;
             _HP.crop(_HPWidth);
+            _HPWidth.width = _barWidth * _HPText / 100;
 
             var bmd2 = _game.add.bitmapData(_barWidth, _barHeight);
             bmd2.ctx.beginPath();
@@ -100,28 +103,28 @@ var states = {
             _SP = _game.add.sprite((_game.world.centerX - _barWidth/2 - _width*0.05), _game.world.top + _barHeight * 1.5, bmd2);
             _SP.cropEnabled = true;
             _SP.crop(_SPWidth);
-            _SPWidth.width = _barWidth * 0.5;
+            _SPWidth.width = _barWidth * _SPText / 100;
 
             hptextbox = _game.add.text(_HP.right, _HP.centerY - _barHeight/2, '0%', {
                 fontSize: '20px',
-                fill: '#ffffff'
+                fill: '#f2bb15'
             });
             hptextbox.text = _HPText + '%';
             sptextbox = _game.add.text(_SP.right, _SP.centerY - _barHeight/2, '0%', {
                 fontSize: '20px',
-                fill: '#ffffff'
+                fill: '#f2bb15'
             });
             sptextbox.text = _SPText + '%';
 
-            var tilizhi = _game.add.text(_HP.left, _HP.top, '体力值', {
+            var tilizhi = _game.add.text(_HP.left+2, _HP.top+2, '体力值', {
                 font: 'Microsoft YaHei, STXihei, serif',
-                fontSize: '20px',
-                fill: '#ffffff'
+                fontSize: '18px',
+                fill: '#65737e'
             });
-            var haogandu = _game.add.text(_SP.left, _SP.top, '好感度', {
+            var haogandu = _game.add.text(_SP.left+2, _SP.top+2, '好感度', {
                 font: 'Microsoft YaHei, STXihei, serif',
-                fontSize: '20px',
-                fill: '#ffffff'
+                fontSize: '18px',
+                fill: '#65737e'
             });
 
             // dialog box section
@@ -154,7 +157,6 @@ var states = {
             } else {
                 _SPText += spCrop
             }
-            console.log(_SPWidth.width);
             _game.add.tween(_HPWidth).to( { width: (_barWidth/100*_HPText) }, 200, Phaser.Easing.Linear.None, true);
             _game.add.tween(_SPWidth).to( { width: (_barWidth/100*_SPText) }, 200, Phaser.Easing.Linear.None, true);
         }
@@ -165,11 +167,11 @@ var states = {
         };
         // update on tap
         function updateText(pointer) {
-            if (choices.length > 0) {
-                for (var el in choices) { 
-                    choices[el].destroy();
-                }
-            }
+            // if (choices.length > 0) {
+            //     for (var el in choices) { 
+            //         choices[el].destroy();
+            //     }
+            // }
             if (_HPText <= 0) {
                 _game.state.start('dead');
             }
@@ -184,11 +186,16 @@ var states = {
                 _step = content[_step]['next'];
             } else if (content[_step]['type'] === 'mcq') {
                 box.loadTexture('mcqBox');
-                box.height = _game.world.height * 0.12 * content[_step]['line'];
+                box.height = _game.world.height * 0.5;
                 dialogText.setText(content[_step]['question']);
                 dialogText.y = box.top + _game.world.width * 0.16;
                 var choiceY = box.top + _game.world.width * 0.32;
                 for (let n = 0; n < 3; n++) {
+                    if (n === 2 && content[_step].hasOwnProperty('special')) {
+                        if (content[_step]['special'] !== _sWupin) {
+                            continue;
+                        }
+                    }
                     choices[n] =  _game.add.sprite(_game.world.centerX, choiceY, 'mcqChoice');
                     choices[n].width = _game.world.width * 0.6;
                     choices[n].height = _game.world.height * 0.08;
@@ -212,38 +219,46 @@ var states = {
                     chosen = 'c';
                 } else { chosen = 'none' } // do nothing if not tap inside choice box
                 if (chosen !== 'none') {
+                    // remove the choice boxes after slection
                     for (var el in choices) { 
                         choices[el].destroy();
                     }
+                    
                     dialogText.setText("你选择了： " + chosen + '\n\n' + content[_step]['text'][chosen]);
                     dialogText.y = box.centerY;
-                    if (content[_step]['effect'][chosen] !== 'nil') {
-                        cropLife(content[_step]['effect'][chosen][0], content[_step]['effect'][chosen][1]);
-                    } else {}
+                    // update 2 bars and bar text
+                    cropLife(content[_step]['effect'][chosen][0], content[_step]['effect'][chosen][1]);
+                    hptextbox.text = _HPText + '%';
+                    sptextbox.text = _SPText + '%';
+                    // if special qn, need to save choice to a veriable
+                    if (content[_step].hasOwnProperty('specialvar')) {
+                        if (content[_step]['specialvar'] === 'sWupin') {
+                            _sWupin = content[_step]['specialans'][chosen];
+                        }
+                    }
+                    // move on to next step
                     _step = content[_step]['next'][chosen];
                 }
             } else {
                 console.log("json file type error");
             }
-            hptextbox.text = _HPText + '%';
-            sptextbox.text = _SPText + '%';
         }
     },
     dead: function() {
         this.create = function() {
             _game.renderer.renderSession.roundPixels = true;
-            var bg = _game.add.image(0, 0, 'bg');
-            bg.width = _game.world.width;
-            bg.height = _game.world.height;
+            _game.stage.backgroundColor = '#000000';
+            // var bg = _game.add.image(0, 0, 'bg');
+            // bg.width = _game.world.width;
+            // bg.height = _game.world.height;
 
-            var resultText = _game.add.text(_game.world.centerX, _game.world.height * 0.3, '你死掉了', {
+            var resultText = _game.add.text(_game.world.centerX, _game.world.height * 0.5, '你死掉了', {
                 font: 'Microsoft YaHei, STXihei, serif',
-                fontSize: '20px',
+                fontSize: '40px',
                 fontWeight: 'bold',
                 fill: '#f2bb15'
             });
             resultText.anchor.setTo(0.5, 0.5);
-
             var remind = _game.add.text(_game.world.centerX, _game.world.height * 0.7, '点击任意位置再玩一次', {
                 font: 'Microsoft YaHei, STXihei, serif',
                 fontSize: '20px',
@@ -260,18 +275,25 @@ var states = {
     breakup: function() {
         this.create = function() {
             _game.renderer.renderSession.roundPixels = true;
-            var bg = _game.add.image(0, 0, 'bg');
-            bg.width = _game.world.width;
-            bg.height = _game.world.height;
+            _game.stage.backgroundColor = '#000000';
+            // var bg = _game.add.image(0, 0, 'bg');
+            // bg.width = _game.world.width;
+            // bg.height = _game.world.height;
 
-            var resultText = _game.add.text(_game.world.centerX, _game.world.height * 0.3, '会不会谈恋爱啊直男癌！\n阿宝跟你分手了', {
+            var resultText1 = _game.add.text(_game.world.centerX, _game.world.height * 0.3, '会不会谈恋爱啊直男癌！', {
                 font: 'Microsoft YaHei, STXihei, serif',
                 fontSize: '20px',
                 fontWeight: 'bold',
                 fill: '#f2bb15'
             });
-            resultText.anchor.setTo(0.5, 0.5);
-
+            resultText1.anchor.setTo(0.5, 0.5);
+            var resultText2 = _game.add.text(_game.world.centerX, _game.world.height * 0.5, '阿宝跟你分手了', {
+                font: 'Microsoft YaHei, STXihei, serif',
+                fontSize: '40px',
+                fontWeight: 'bold',
+                fill: '#f2bb15'
+            });
+            resultText2.anchor.setTo(0.5, 0.5);
             var remind = _game.add.text(_game.world.centerX, _game.world.height * 0.7, '点击任意位置再玩一次', {
                 font: 'Microsoft YaHei, STXihei, serif',
                 fontSize: '20px',
