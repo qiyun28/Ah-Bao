@@ -207,7 +207,7 @@ var states = {
                         fill: '#05173B'
                     });
                     choices[n+3].anchor.setTo(0.5, 0.5);
-                    choiceY += _game.world.width * 0.2;
+                    choiceY += _game.world.width * 0.17;
                 }
                 _step = content[_step]['next'];
             } else if (content[_step]['type'] === 'asw') {
