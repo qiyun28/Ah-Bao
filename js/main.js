@@ -117,12 +117,12 @@ var states = {
             });
             sptextbox.text = _SPText + '%';
 
-            var tilizhi = _game.add.text(_HP.left+2, _HP.top+2, '体力值', {
+            var tilizhi = _game.add.text(_HP.left+5, _HP.top+5, '体力值', {
                 font: 'Microsoft YaHei, STXihei, serif',
                 fontSize: '18px',
                 fill: '#65737e'
             });
-            var haogandu = _game.add.text(_SP.left+2, _SP.top+2, '好感度', {
+            var haogandu = _game.add.text(_SP.left+5, _SP.top+5, '好感度', {
                 font: 'Microsoft YaHei, STXihei, serif',
                 fontSize: '18px',
                 fill: '#65737e'
@@ -207,7 +207,7 @@ var states = {
                         fill: '#05173B'
                     });
                     choices[n+3].anchor.setTo(0.5, 0.5);
-                    choiceY += _game.world.width * 0.1;
+                    choiceY += _game.world.width * 0.2;
                 }
                 _step = content[_step]['next'];
             } else if (content[_step]['type'] === 'asw') {
